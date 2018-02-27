@@ -6,7 +6,7 @@ interface Todo{
 class TodoManager{
     private todo:Todo[];
     constructor(public str: string){
-        if(str.)
+        if(str.hoge)
     }
 
     getTodo(){  //TODOリストを取得

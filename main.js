@@ -1,11 +1,25 @@
-var Person = /** @class */ (function () {
-    function Person(name) {
-        this.name = name;
+var arg = process.argv;
+var TodoManager = /** @class */ (function () {
+    function TodoManager(str) {
+        this.str = str;
+        if (str == "") {
+            this.getTodo();
+        }
+        else if (str == "add") {
+            this.addTodo();
+        }
+        else if (str == "complete") {
+            this.completeTodo();
+        }
     }
-    Person.prototype.greet = function () {
-        console.log("\u3053\u3093\u306B\u3061\u306F\uFF0C\u79C1\u306E\u540D\u524D\u306F" + this.name + "\u3067\u3059");
+    TodoManager.prototype.getTodo = function () {
     };
-    return Person;
+    TodoManager.prototype.addTodo = function () {
+    };
+    TodoManager.prototype.completeTodo = function () {
+    };
+    return TodoManager;
 }());
-var kamimura = new Person("かみむら");
-kamimura.greet();
+if (process.argv.length >= 0) {
+    console.log(arg[2]);
+}

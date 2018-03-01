@@ -16,10 +16,9 @@ class MyTodo implements Todo{
 }
 
 class TodoManager{
-    private myTodo:Array<MyTodo>;
+    private myTodo:Todo[];
     constructor(public args: string[]){
-        //this.myTodo = this.getTodo();
-        this.myTodo = this.getTodo();
+        this.myTodo = this.getTodo();   //Array<MyTodo>型で取得する
         if(args.length == 2){
             this.displayTodo(this.myTodo);
         }else if(args[2] == "add"){
@@ -30,47 +29,39 @@ class TodoManager{
     }
 
     private getTodo(){  //TODOリストを取得
-        //const str = fs.readFileSync('todo.txt','utf8');
-        //JSONから文字列リスト型に変換する
-        const myTodo = new Array<MyTodo>();
-        myTodo.push(new MyTodo("hoge",1));
-        myTodo.push(new MyTodo("fuga",2));
+        const myTodo:Todo[] = JSON.parse(fs.readFileSync('todo.json','utf8'));
         return myTodo;
     }
 
-    private displayTodo(myTodo:Array<MyTodo>){
-        
+    private displayTodo(myTodo:Todo[]){
         console.log(myTodo);
     }
 
-    private addTodo(arg:string,myTodo:Array<MyTodo>){  //TODOを加える
+    private addTodo(arg:string,myTodo:Todo[]){  //TODOを加える
         //myTodoにnewTodoを付け加える
         const newTodo = new MyTodo(arg,this.produceID());
         myTodo.push(newTodo);
-        //myTodoをJSONに直して保存
-        const todo = `{
-            "TODO":[
-                {
-                    "id":"1",
-                    "todo":"爪を切る"
-                },
-                {
-                    "id":"2",
-                    "todo":"風呂に入る"
-                }
-            ]
-        }`;
-        const jsonFile = JSON.parse(todo);
-        fs.writeFileSync('todo.txt',jsonFile,'utf8');
+        const jsonFile = JSON.stringify(myTodo);
+        fs.writeFileSync('todo.json',jsonFile,'utf8');
     }
 
-    private completeTodo(id_str:string,myTodo:Array<MyTodo>){
+    private completeTodo(id_str:string,myTodo:Todo[]){
         const id = parseInt(id_str);
-
+        for(let i=0;i<myTodo.length;i++){
+            if(myTodo[i].id == id){
+                const newTodo = myTodo.splice(i,1);
+                const jsonFile = JSON.stringify(myTodo);
+                fs.writeFileSync('todo.json',jsonFile,'utf8');
+            }
+        }
     }
+
 
     private produceID(){
-        return 5;
+        let counter:number = parseInt(fs.readFileSync('counter.txt','utf8'))
+        counter+=1;
+        fs.writeFileSync('counter.txt',counter);
+        return counter;
     }
 }
 

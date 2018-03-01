@@ -12,8 +12,7 @@ var MyTodo = /** @class */ (function () {
 var TodoManager = /** @class */ (function () {
     function TodoManager(args) {
         this.args = args;
-        //this.myTodo = this.getTodo();
-        this.myTodo = this.getTodo();
+        this.myTodo = this.getTodo(); //Array<MyTodo>型で取得する
         if (args.length == 2) {
             this.displayTodo(this.myTodo);
         }
@@ -25,11 +24,7 @@ var TodoManager = /** @class */ (function () {
         }
     }
     TodoManager.prototype.getTodo = function () {
-        //const str = fs.readFileSync('todo.txt','utf8');
-        //JSONから文字列リスト型に変換する
-        var myTodo = new Array();
-        myTodo.push(new MyTodo("hoge", 1));
-        myTodo.push(new MyTodo("fuga", 2));
+        var myTodo = JSON.parse(fs.readFileSync('todo.json', 'utf8'));
         return myTodo;
     };
     TodoManager.prototype.displayTodo = function (myTodo) {
@@ -39,16 +34,24 @@ var TodoManager = /** @class */ (function () {
         //myTodoにnewTodoを付け加える
         var newTodo = new MyTodo(arg, this.produceID());
         myTodo.push(newTodo);
-        //myTodoをJSONに直して保存
-        var todo = "{\n            \"TODO\":[\n                {\n                    \"id\":\"1\",\n                    \"todo\":\"\u722A\u3092\u5207\u308B\"\n                },\n                {\n                    \"id\":\"2\",\n                    \"todo\":\"\u98A8\u5442\u306B\u5165\u308B\"\n                }\n            ]\n        }";
-        var jsonFile = JSON.parse(todo);
-        fs.writeFileSync('todo.txt', jsonFile, 'utf8');
+        var jsonFile = JSON.stringify(myTodo);
+        fs.writeFileSync('todo.json', jsonFile, 'utf8');
     };
     TodoManager.prototype.completeTodo = function (id_str, myTodo) {
         var id = parseInt(id_str);
+        for (var i = 0; i < myTodo.length; i++) {
+            if (myTodo[i].id == id) {
+                var newTodo = myTodo.splice(i, 1);
+                var jsonFile = JSON.stringify(myTodo);
+                fs.writeFileSync('todo.json', jsonFile, 'utf8');
+            }
+        }
     };
     TodoManager.prototype.produceID = function () {
-        return 5;
+        var counter = parseInt(fs.readFileSync('counter.txt', 'utf8'));
+        counter += 1;
+        fs.writeFileSync('counter.txt', counter);
+        return counter;
     };
     return TodoManager;
 }());
